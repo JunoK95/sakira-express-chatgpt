@@ -8,7 +8,7 @@ export async function transcribeAudioFile(req) {
 
   const transcription = await openai.audio.transcriptions.create({
     file: fs.createReadStream(req.file.path),
-    model: "gpt-4o-mini-transcribe", // or 'whisper-1'
+    model: "gpt-4o-mini-transcribe",
     filename: "recorded.wav", // helps OpenAI detect format
   });
 

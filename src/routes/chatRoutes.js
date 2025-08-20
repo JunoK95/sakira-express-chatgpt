@@ -1,7 +1,10 @@
 import express from "express";
 import multer from "multer";
+import fs from "fs";
+import path from "path";
 import { getChatReply } from "../services/chatService.js";
 import { transcribeAudioFile } from "../services/transcribeAudioFile.js";
+import { ttsService } from "../services/ttsService.js";
 
 // Force file name and type
 const storage = multer.diskStorage({
@@ -54,7 +57,17 @@ router.post("/", upload.single("audio"), async (req, res) => {
     console.log("Asking OpenAI for reply:", finalMessage);
     const reply = await getChatReply(finalMessage);
     console.log("OpenAI reply:", reply);
-    res.json({ reply });
+    const audioResponse = await ttsService(reply);
+    // Save audio to file
+    // File to save the generated audio
+    const outFile = path.resolve("outputs/speech.mp3");
+    const buffer = Buffer.from(await audioResponse.arrayBuffer()); // ✅ works with SDK 4.0+
+    fs.writeFileSync("output.mp3", buffer);
+
+    console.log("✅ Saved to output.mp3");
+
+    console.log("✅ Speech generated at", outFile);
+    res.json({ reply, audio: audioResponse });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Something went wrong" });
