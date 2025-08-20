@@ -59,14 +59,12 @@ router.post("/", upload.single("audio"), async (req, res) => {
     console.log("OpenAI reply:", reply);
     const audioResponse = await ttsService(reply);
     // Save audio to file
-    // File to save the generated audio
     const outFile = path.resolve("outputs/speech.mp3");
     const buffer = Buffer.from(await audioResponse.arrayBuffer()); // ✅ works with SDK 4.0+
     fs.writeFileSync("output.mp3", buffer);
-
     console.log("✅ Saved to output.mp3");
-
     console.log("✅ Speech generated at", outFile);
+
     res.json({ reply, audio: audioResponse });
   } catch (err) {
     console.error(err);
