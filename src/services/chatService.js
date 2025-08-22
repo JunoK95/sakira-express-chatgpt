@@ -1,11 +1,11 @@
 import openai from "../config/openai.js";
-import { knowledgeBase } from "../constants/prompts.js";
+import { junoPrompt } from "../constants/prompts.js";
 
 export async function getChatReply(message) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      { role: "system", content: knowledgeBase },
+      { role: "system", content: junoPrompt },
       { role: "user", content: message },
     ],
   });
